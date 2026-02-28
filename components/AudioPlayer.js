@@ -1,27 +1,45 @@
 import { useEffect, useRef } from 'react';
 import H5AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
-import { usePlayerStore } from '@/store/playerStore';
-import { db } from '@/lib/firebase';
+import { usePlayerStore } from '../store/playerStore';
+import { db } from '../lib/firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 
 export default function AudioPlayer() {
-  const { currentSong, setCurrentSong, playlist, isPlaying } = usePlayerStore();
+  const { currentSong, setCurrentSong, playlist } = usePlayerStore();
   const playerRef = useRef();
 
   useEffect(() => {
-    if (playerRef.current) {
-      if (isPlaying) {
-        playerRef.current.audio.current.play();
-      } else {
-        playerRef.current.audio.current.pause();
-      }
+    // Disable right click on audio player
+    const disableContextMenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const audioElement = playerRef.current?.audio?.current;
+    if (audioElement) {
+      audioElement.addEventListener('contextmenu', disableContextMenu);
+      
+      // Prevent dragging to download
+      audioElement.addEventListener('dragstart', (e) => e.preventDefault());
+      
+      // Disable developer tools shortcuts (basic protection)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+          e.preventDefault();
+        }
+      });
     }
-  }, [isPlaying, currentSong]);
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('contextmenu', disableContextMenu);
+      }
+    };
+  }, [currentSong]);
 
   const handlePlay = async () => {
     if (currentSong) {
-      // Increment play count
       try {
         const songRef = doc(db, 'songs', currentSong.id);
         await updateDoc(songRef, {
@@ -64,6 +82,11 @@ export default function AudioPlayer() {
         header={`Now Playing: ${currentSong.title} - ${currentSong.artist}`}
         layout="horizontal"
         className="custom-audio-player"
+        customAdditionalControls={[]}
+        showDownloadProgress={false}
+        showFilledProgress={true}
+        showJumpControls={true}
+        autoPlayAfterSrcChange={false}
       />
     </div>
   );
