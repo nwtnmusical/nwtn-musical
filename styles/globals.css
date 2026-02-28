@@ -2,31 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #d12200;
-  --primary-dark: #a51502;
-  --primary-light: #f8c5c0;
-  --secondary: #cf2100;
+@layer base {
+  * {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-primary to-primary-dark min-h-screen text-white;
+  }
 }
 
-body {
-  @apply bg-gradient-to-br from-[#d12200] to-[#a51502] min-h-screen;
+@layer components {
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-all duration-300 transform hover:scale-105 font-semibold;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-primary px-6 py-3 rounded-lg hover:bg-primary-light transition-all duration-300 font-semibold;
+  }
+
+  .card {
+    @apply bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white/20 border border-primary-light rounded-lg text-white placeholder-primary-light focus:outline-none focus:border-white transition;
+  }
 }
 
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f8c5c0;
+  @apply bg-primary-light;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d12200;
-  border-radius: 4px;
+  @apply bg-primary rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a51502;
+  @apply bg-primary-dark;
+}
+
+/* Audio Player Customization */
+.rhap_container {
+  @apply bg-primary-dark !important;
+  box-shadow: none !important;
+}
+
+.rhap_main-controls-button {
+  @apply text-white !important;
+}
+
+.rhap_volume-button,
+.rhap_volume-indicator {
+  @apply text-white !important;
+}
+
+.rhap_progress-filled {
+  @apply bg-primary-light !important;
+}
+
+.rhap_progress-indicator {
+  @apply bg-white !important;
+}
+
+.rhap_time {
+  @apply text-white !important;
+}
+
+/* Loading Animation */
+.loading-spinner {
+  @apply animate-spin rounded-full border-4 border-primary-light border-t-white;
 }
