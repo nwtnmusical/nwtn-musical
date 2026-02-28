@@ -275,4 +275,45 @@ export default function ReviewsManagement() {
                     {/* Actions */}
                     <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
                       {review.status !== 'approved' && (
-                       
+                        <button
+                          onClick={() => handleStatusChange(review.id, 'approved')}
+                          className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm"
+                        >
+                          <FaCheck size={12} />
+                          Approve
+                        </button>
+                      )}
+                      
+                      {review.status !== 'rejected' && (
+                        <button
+                          onClick={() => handleStatusChange(review.id, 'rejected')}
+                          className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
+                        >
+                          <FaTimes size={12} />
+                          Reject
+                        </button>
+                      )}
+                      
+                      <button
+                        onClick={() => handleDelete(review.id)}
+                        className="flex items-center gap-1 px-3 py-1 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm ml-auto"
+                      >
+                        <FaTrash size={12} />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <FaStar className="mx-auto text-6xl text-gray-300 mb-4" />
+                <p className="text-gray-500">No reviews found</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
+  );
+}
