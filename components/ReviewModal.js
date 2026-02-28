@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db } from '@/lib/firebase';
+import { db } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { FaStar, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
