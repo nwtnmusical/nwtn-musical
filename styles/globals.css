@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #d12200;
+  --primary-dark: #a51502;
+  --primary-light: #f8c5c0;
+  --secondary: #cf2100;
+}
+
+body {
+  @apply bg-gradient-to-br from-[#d12200] to-[#a51502] min-h-screen;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8c5c0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d12200;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a51502;
+}
