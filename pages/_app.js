@@ -1,10 +1,10 @@
-import '@/styles/globals.css';
+import '../styles/globals.css';
 import { useState, useEffect } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import LoadingBar from '@/components/LoadingBar';
+import LoadingBar from '../components/LoadingBar';
 
 export default function App({ 
   Component, 
