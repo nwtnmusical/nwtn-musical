@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db } from '../lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { FaStar, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ export default function ReviewModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (rating === 0) {
       toast.error('Please select a rating');
       return;
@@ -26,8 +27,8 @@ export default function ReviewModal({ isOpen, onClose }) {
       await addDoc(collection(db, 'reviews'), {
         ...formData,
         rating,
+        status: 'pending',
         createdAt: serverTimestamp(),
-        status: 'pending' // For admin moderation
       });
       
       toast.success('Thank you for your review!');
@@ -44,39 +45,35 @@ export default function ReviewModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-[#d12200]">Rate Us</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-[#d12200]">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-primary p-6 text-white rounded-t-xl flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Rate Our Music</h2>
+          <button onClick={onClose} className="hover:text-primary-light">
             <FaTimes size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="p-6">
           {/* Star Rating */}
-          <div className="flex justify-center mb-4">
-            {[...Array(5)].map((_, index) => {
-              const ratingValue = index + 1;
-              return (
-                <label key={index}>
-                  <input
-                    type="radio"
-                    name="rating"
-                    value={ratingValue}
-                    onClick={() => setRating(ratingValue)}
-                    className="hidden"
-                  />
-                  <FaStar
-                    className="cursor-pointer transition-colors"
-                    size={30}
-                    color={ratingValue <= (hover || rating) ? '#ffc107' : '#e4e5e9'}
-                    onMouseEnter={() => setHover(ratingValue)}
-                    onMouseLeave={() => setHover(0)}
-                  />
-                </label>
-              );
-            })}
+          <div className="flex justify-center gap-2 mb-6">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHover(star)}
+                onMouseLeave={() => setHover(0)}
+                className="focus:outline-none"
+              >
+                <FaStar
+                  size={30}
+                  className={`transition-colors ${
+                    star <= (hover || rating) ? 'text-yellow-400' : 'text-gray-300'
+                  }`}
+                />
+              </button>
+            ))}
           </div>
 
           <div className="space-y-4">
@@ -86,7 +83,7 @@ export default function ReviewModal({ isOpen, onClose }) {
               required
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
-              className="w-full px-4 py-2 border border-[#f8c5c0] rounded-lg focus:outline-none focus:border-[#d12200]"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
             />
             
             <input
@@ -95,7 +92,7 @@ export default function ReviewModal({ isOpen, onClose }) {
               required
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
-              className="w-full px-4 py-2 border border-[#f8c5c0] rounded-lg focus:outline-none focus:border-[#d12200]"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
             />
             
             <textarea
@@ -104,13 +101,13 @@ export default function ReviewModal({ isOpen, onClose }) {
               rows="4"
               value={formData.review}
               onChange={(e) => setFormData({...formData, review: e.target.value})}
-              className="w-full px-4 py-2 border border-[#f8c5c0] rounded-lg focus:outline-none focus:border-[#d12200]"
-            ></textarea>
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary resize-none"
+            />
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#d12200] text-white py-3 rounded-lg hover:bg-[#a51502] transition disabled:opacity-50"
+              className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark transition disabled:opacity-50 font-semibold"
             >
               {loading ? 'Submitting...' : 'Submit Review'}
             </button>
