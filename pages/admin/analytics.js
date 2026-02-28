@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import AdminLayout from '@/components/AdminLayout';
-import { db } from '@/lib/firebase';
+import AdminLayout from '../../components/AdminLayout';
+import { db } from '../../lib/firebase';
 import { collection, query, getDocs, orderBy, limit, where } from 'firebase/firestore';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
