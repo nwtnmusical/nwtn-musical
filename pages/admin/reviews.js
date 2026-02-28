@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db } from '../../lib/firebase';
 import { collection, query, orderBy, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import AdminLayout from '@/components/AdminLayout';
+import AdminLayout from '../../components/AdminLayout';
 import { FaTrash, FaCheck, FaTimes, FaStar, FaUser } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -14,7 +14,7 @@ export default function ReviewsManagement() {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, pending, approved
+  const [filter, setFilter] = useState('all');
   const [stats, setStats] = useState({
     total: 0,
     average: 0,
@@ -138,7 +138,7 @@ export default function ReviewsManagement() {
     <AdminLayout>
       <div className="space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-gray-500 text-sm">Total Reviews</h3>
             <p className="text-3xl font-bold text-primary mt-2">{stats.total}</p>
@@ -163,96 +163,71 @@ export default function ReviewsManagement() {
           </div>
         </div>
 
-        {/* Rating Distribution */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold mb-4">Rating Distribution</h3>
-          <div className="space-y-3">
-            {[5, 4, 3, 2, 1].map((rating) => (
-              <div key={rating} className="flex items-center gap-4">
-                <div className="w-12 text-sm font-medium">{rating} stars</div>
-                <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary"
-                    style={{ 
-                      width: `${stats.total > 0 ? (stats.distribution[rating - 1] / stats.total) * 100 : 0}%` 
-                    }}
-                  />
-                </div>
-                <div className="w-12 text-sm text-gray-600">
-                  {stats.distribution[rating - 1]}
-                </div>
-              </div>
-            ))}
+        {/* Filter Buttons */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-4 py-2 rounded-lg transition ${
+                filter === 'all' 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All ({stats.total})
+            </button>
+            <button
+              onClick={() => setFilter('pending')}
+              className={`px-4 py-2 rounded-lg transition ${
+                filter === 'pending' 
+                  ? 'bg-yellow-500 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Pending ({stats.pending})
+            </button>
+            <button
+              onClick={() => setFilter('approved')}
+              className={`px-4 py-2 rounded-lg transition ${
+                filter === 'approved' 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Approved ({stats.approved})
+            </button>
           </div>
         </div>
 
-        {/* Reviews Table */}
-        <div className="bg-white rounded-lg shadow">
-          {/* Header */}
+        {/* Reviews List */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <h2 className="text-2xl font-bold">Reviews Management</h2>
-              
-              {/* Filter Buttons */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setFilter('all')}
-                  className={`px-4 py-2 rounded-lg transition ${
-                    filter === 'all' 
-                      ? 'bg-primary text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  All ({stats.total})
-                </button>
-                <button
-                  onClick={() => setFilter('pending')}
-                  className={`px-4 py-2 rounded-lg transition ${
-                    filter === 'pending' 
-                      ? 'bg-yellow-500 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Pending ({stats.pending})
-                </button>
-                <button
-                  onClick={() => setFilter('approved')}
-                  className={`px-4 py-2 rounded-lg transition ${
-                    filter === 'approved' 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Approved ({stats.approved})
-                </button>
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold">Reviews Management</h2>
           </div>
 
-          {/* Reviews List */}
           <div className="p-6">
             {filteredReviews.length > 0 ? (
               <div className="space-y-4">
                 {filteredReviews.map((review) => (
                   <div key={review.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                     {/* Review Header */}
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
                         <div className="bg-primary/10 p-2 rounded-full">
                           <FaUser className="text-primary" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{review.name}</h4>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm text-gray-500">
                             <span>{review.email}</span>
-                            <span>•</span>
+                            <span className="hidden sm:inline">•</span>
                             <span>{formatDistanceToNow(review.createdAt, { addSuffix: true })}</span>
                           </div>
                         </div>
                       </div>
                       
                       {/* Status Badge */}
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      <span className={`self-start sm:self-auto px-3 py-1 rounded-full text-xs font-semibold ${
                         review.status === 'approved' 
                           ? 'bg-green-100 text-green-800'
                           : review.status === 'rejected'
@@ -273,7 +248,7 @@ export default function ReviewsManagement() {
                     <p className="text-gray-700 mb-4">{review.review}</p>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
+                    <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-gray-100">
                       {review.status !== 'approved' && (
                         <button
                           onClick={() => handleStatusChange(review.id, 'approved')}
