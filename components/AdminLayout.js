@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
@@ -17,7 +17,12 @@ import {
 
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: FaHome },
@@ -29,12 +34,14 @@ export default function AdminLayout({ children }) {
     { href: '/admin/settings', label: 'Settings', icon: FaCog },
   ];
 
+  if (!mounted) return null;
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Mobile Header */}
-      <div className="lg:hidden bg-primary text-white p-4 flex justify-between items-center">
+      <div className="lg:hidden bg-primary text-white p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-40">
         <h1 className="text-xl font-bold">NWTN ADMIN</h1>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white">
           {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
       </div>
@@ -49,7 +56,7 @@ export default function AdminLayout({ children }) {
             <p className="text-primary-light text-sm mt-1">Music Management</p>
           </div>
 
-          <nav className="flex-1 px-4">
+          <nav className="flex-1 px-4 overflow-y-auto">
             {menuItems.map((item) => (
               <Link
                 key={item.href}
@@ -80,7 +87,7 @@ export default function AdminLayout({ children }) {
       </div>
 
       {/* Main Content */}
-      <div className="lg:ml-64 min-h-screen">
+      <div className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
         <div className="bg-white shadow">
           <div className="container mx-auto px-6 py-4">
             <h1 className="text-2xl font-bold text-primary">
