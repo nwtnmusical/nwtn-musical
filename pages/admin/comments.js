@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db } from '../../lib/firebase';
 import { collection, query, orderBy, getDocs, deleteDoc, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import AdminLayout from '@/components/AdminLayout';
+import AdminLayout from '../../components/AdminLayout';
 import { FaTrash, FaReply, FaCheck, FaTimes, FaUser, FaMusic } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
